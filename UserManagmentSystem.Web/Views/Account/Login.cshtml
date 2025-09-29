@@ -1,0 +1,343 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <title>Login - Your App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .login-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 20px solid #764ba2;
+        }
+
+        .app-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .login-form {
+            padding: 40px 30px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+            background-color: white;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 10;
+            pointer-events: auto;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .remember-section {
+            margin: 25px 0;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-check-input {
+            margin-right: 8px;
+            transform: scale(1.1);
+        }
+
+        .form-check-label {
+            color: #666;
+            font-size: 0.9rem;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .form-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .signup-section,
+        .forgot-section {
+            width: 100%;
+        }
+
+        .signup-link, .forgot-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .signup-link:hover, .forgot-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .signup-text {
+            color: #666;
+        }
+
+        .validation-summary {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: #721c24;
+        }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .field-validation-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        .input-validation-error {
+            border-color: #dc3545 !important;
+        }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+}
+
+<div class="d-flex align-items-center justify-content-center">
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="app-name">THE APP</h1>
+        </div>
+
+        <div class="login-form">
+            <form method="post" action="/Account/Login" id="loginForm">
+
+                <div class="form-group">
+                    <label for="Email" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>Email
+                    </label>
+                    <div class="input-group">
+                        <input type="email"
+                               class="form-control"
+                               id="Email"
+                               name="Email"
+                               placeholder="Enter your email"
+                               required
+                               autocomplete="email">
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="Password" class="form-label">
+                        <i class="fas fa-lock me-2"></i>Password
+                    </label>
+                    <div class="input-group">
+                        <input type="password"
+                               class="form-control"
+                               id="Password"
+                               name="Password"
+                               placeholder="Enter your password"
+                               required
+                               autocomplete="current-password">
+                        <i class="fas fa-eye-slash input-icon toggle-password"
+                           style="cursor: pointer;"
+                           title="Show/Hide password"></i>
+                    </div>
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="remember-section">
+                    <div class="form-check">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="RememberMe"
+                               name="RememberMe"
+                               value="true">
+                        <input type="hidden" name="RememberMe" value="false">
+                        <label class="form-check-label" for="RememberMe">
+                            Remember me
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="btn btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Sign In
+                </button>
+
+                <!-- Links -->
+                <div class="form-links">
+                    <div class="signup-section">
+                        <span class="signup-text">Don’t have an account?</span>
+                        <a href="/Account/Register" class="signup-link">Sign Up</a>
+                    </div>
+                    <div class="forgot-section">
+                        <a href="/Account/ForgotPassword" class="forgot-link">
+                            <i class="fas fa-key me-1"></i>
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const togglePassword = document.querySelector('.toggle-password');
+            const passwordInput = document.getElementById('Password');
+
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+
+            form.addEventListener('submit', function(e) {
+                loginBtn.classList.add('btn-loading');
+                loginBtn.innerHTML = 'Kuzatilmoqda...';
+            });
+
+            const inputs = form.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value.trim() === '') {
+                        this.classList.add('input-validation-error');
+                    } else {
+                        this.classList.remove('input-validation-error');
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('input-validation-error') && this.value.trim() !== '') {
+                        this.classList.remove('input-validation-error');
+                    }
+                });
+            });
+        });
+    </script>
+}

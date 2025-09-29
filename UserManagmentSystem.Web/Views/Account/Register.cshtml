@@ -1,0 +1,465 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Sign Up";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <title>Register - Your App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 30px 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .register-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 20px solid #764ba2;
+        }
+
+        .app-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .register-subtitle {
+            font-size: 0.95rem;
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+
+        .register-form {
+            padding: 35px 30px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.15rem rgba(102, 126, 234, 0.15);
+            background-color: white;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 10;
+            font-size: 0.9rem;
+        }
+
+        .toggle-password {
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-register {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 13px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: white;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .form-links {
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .login-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .login-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .login-text {
+            color: #666;
+        }
+
+        .validation-summary {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 18px;
+            color: #721c24;
+        }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .field-validation-error {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .input-validation-error {
+            border-color: #dc3545 !important;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+
+        .strength-weak {
+            color: #dc3545;
+        }
+
+        .strength-medium {
+            color: #ffc107;
+        }
+
+        .strength-strong {
+            color: #28a745;
+        }
+
+        .password-match {
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+
+        .match-success {
+            color: #28a745;
+        }
+
+        .match-error {
+            color: #dc3545;
+        }
+
+        /* Loading animation */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 18px;
+            color: #155724;
+        }
+    </style>
+}
+
+<div class="d-flex align-items-center justify-content-center">
+    <div class="register-container">
+        <div class="register-header">
+            <h1 class="app-name">THE APP</h1>
+            <div class="register-subtitle">Create a new account</div>
+        </div>
+
+        <div class="register-form">
+            <!-- ASP.NET MVC Form -->
+            <form method="post" action="/Account/Register" id="registerForm">
+                <!-- Validation Summary -->
+                <div asp-validation-summary="All" class="validation-summary" style="display: none;">
+                    <strong>An error occurred:</strong>
+                    <ul>
+                        <li>Please enter valid information</li>
+                    </ul>
+                </div>
+
+                <!-- Success Message -->
+                <div class="success-message" style="display: none;">
+                    <i class="fas fa-check-circle me-2"></i>
+                    You have successfully registered!
+                </div>
+
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label for="Name" class="form-label">
+                        <i class="fas fa-user me-2"></i>Name
+                    </label>
+                    <div class="input-group">
+                        <input type="text"
+                               class="form-control"
+                               id="Name"
+                               name="Name"
+                               placeholder="Enter your name"
+                               required
+                               autocomplete="given-name">
+                        <i class="fas fa-user-tag input-icon"></i>
+                    </div>
+                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                </div>
+
+                <!-- Position Field -->
+                <div class="form-group">
+                    <label for="Position" class="form-label">
+                        <i class="fas fa-briefcase me-2"></i>Position
+                    </label>
+                    <div class="input-group">
+                        <input type="text"
+                               class="form-control"
+                               id="Position"
+                               name="Position"
+                               placeholder="Enter your position (optional)"
+                               autocomplete="organization-title">
+                        <i class="fas fa-id-badge input-icon"></i>
+                    </div>
+                    <span asp-validation-for="Position" class="field-validation-error"></span>
+                </div>
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="Email" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>Email
+                    </label>
+                    <div class="input-group">
+                        <input type="email"
+                               class="form-control"
+                               id="Email"
+                               name="Email"
+                               placeholder="Enter your email"
+                               required
+                               autocomplete="email">
+                        <i class="fas fa-at input-icon"></i>
+                    </div>
+                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                </div>
+
+                <!-- Password Fields Row -->
+                <div class="form-row">
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="Password" class="form-label">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password"
+                                   class="form-control"
+                                   id="Password"
+                                   name="Password"
+                                   placeholder="Enter your password"
+                                   required
+                                   autocomplete="new-password">
+                            <i class="fas fa-eye-slash input-icon toggle-password"
+                               data-target="Password"></i>
+                        </div>
+                        <div id="passwordStrength" class="password-strength"></div>
+                        <span asp-validation-for="Password" class="field-validation-error"></span>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="form-group">
+                        <label for="ConfirmPassword" class="form-label">
+                            <i class="fas fa-lock me-2"></i>Confirm Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password"
+                                   class="form-control"
+                                   id="ConfirmPassword"
+                                   name="ConfirmPassword"
+                                   placeholder="Re-enter your password"
+                                   required
+                                   autocomplete="new-password">
+                            <i class="fas fa-eye-slash input-icon toggle-password"
+                               data-target="ConfirmPassword"></i>
+                        </div>
+                        <div id="passwordMatch" class="password-match"></div>
+                        <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <!-- Register Button -->
+                <button type="submit" class="btn btn-register" id="registerBtn">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Sign up
+                </button>
+
+                <!-- Links -->
+                <div class="form-links">
+                    <span class="login-text">Already have an account?</span>
+                    <a href="/Account/Login" class="login-link">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registerForm');
+            const registerBtn = document.getElementById('registerBtn');
+            const passwordInput = document.getElementById('Password');
+            const confirmPasswordInput = document.getElementById('ConfirmPassword');
+            const passwordStrengthDiv = document.getElementById('passwordStrength');
+            const passwordMatchDiv = document.getElementById('passwordMatch');
+
+            document.querySelectorAll('.toggle-password').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const targetInput = document.getElementById(targetId);
+                    const type = targetInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    targetInput.setAttribute('type', type);
+
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            });
+
+            passwordInput.addEventListener('input', function() {
+                const strength = checkPasswordStrength(this.value);
+                passwordStrengthDiv.innerHTML = strength;
+
+                if (confirmPasswordInput.value) {
+                    checkPasswordMatch();
+                }
+            });
+
+            function checkPasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (confirmPassword === '') {
+                    passwordMatchDiv.innerHTML = '';
+                    return;
+                }
+
+                if (password === confirmPassword) {
+                    passwordMatchDiv.innerHTML = '<span class="match-success"><i class="fas fa-check"></i> Passwords match</span>';
+                    confirmPasswordInput.classList.remove('input-validation-error');
+                } else {
+                    passwordMatchDiv.innerHTML = '<span class="match-error"><i class="fas fa-times"></i> Passwords do not match</span>';
+                    confirmPasswordInput.classList.add('input-validation-error');
+                }
+            }
+
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+            form.addEventListener('submit', function(e) {
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    e.preventDefault();
+                    confirmPasswordInput.classList.add('input-validation-error');
+                    passwordMatchDiv.innerHTML = '<span class="match-error"><i class="fas fa-times"></i> Passwords do not match</span>';
+                    return;
+                }
+
+                registerBtn.classList.add('btn-loading');
+                registerBtn.innerHTML = 'Registering...';
+            });
+
+            const inputs = form.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value.trim() === '') {
+                        this.classList.add('input-validation-error');
+                    } else {
+                        this.classList.remove('input-validation-error');
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('input-validation-error') && this.value.trim() !== '') {
+                        this.classList.remove('input-validation-error');
+                    }
+                });
+            });
+
+            document.getElementById('Name').focus();
+        });
+    </script>
+}
