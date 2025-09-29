@@ -486,3 +486,5 @@ $RECYCLE.BIN/
 # Ignore local appsettings for development
 appsettings.Development.json
 
+# Local environment variables
+.env
