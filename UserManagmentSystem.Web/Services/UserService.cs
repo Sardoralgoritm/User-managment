@@ -31,9 +31,23 @@ public class UserService : IUserService
         _logger = logger;
     }
 
-    public Task<ServiceResult> BlockUsersAsync(List<Guid> ids)
+    public async Task<ServiceResult> BlockUsersAsync(List<Guid> ids)
     {
-        throw new NotImplementedException();
+        if (ids == null)
+        {
+            return new ServiceResult { Message = "Users are not selected!", Success = false };
+        }
+
+        var users = await dbContext.Users.Where(u => ids.Contains(u.Id) && u.Status != Status.Blocked).ToListAsync();
+        foreach (var user in users)
+        {
+            user.Status = Status.Blocked;
+            dbContext.Users.Update(user);
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        return new ServiceResult { Message = "Users blocked successfully!", Success = true };
     }
 
     public Task<ServiceResult> DeleteUsersAsync(List<Guid> ids)

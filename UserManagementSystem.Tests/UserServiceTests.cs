@@ -122,4 +122,40 @@ public class UserServiceTests
 
         Assert.False(result.Success);
     }
+
+    [Fact]
+    public async Task BlockUsers_Success()
+    {
+        var db = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
+                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+
+        var id1 = Guid.NewGuid();
+        var id2 = Guid.NewGuid();
+
+        db.Users.AddRange(
+            new User { Id = id1, Email = "user1@test.com", Status = Status.Active },
+            new User { Id = id2, Email = "user2@test.com", Status = Status.Active }
+        );
+
+        await db.SaveChangesAsync();
+
+        var service = new UserService(db, new Mock<IPasswordService>().Object, new Mock<IEmailService>().Object, new Mock<IHttpContextAccessor>().Object, new Mock<ILogger<UserService>>().Object);
+
+        var result = await service.BlockUsersAsync(new List<Guid> { id1, id2 });
+
+        Assert.True(result.Success);
+        Assert.All(await db.Users.ToListAsync(), u => Assert.Equal(Status.Blocked, u.Status));
+    }
+
+    [Fact]
+    public async Task BlockUsers_NullIds_Fails()
+    {
+        var db = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+
+        var service = new UserService(db, new Mock<IPasswordService>().Object, new Mock<IEmailService>().Object, new Mock<IHttpContextAccessor>().Object, new Mock<ILogger<UserService>>().Object);
+
+        var result = await service.BlockUsersAsync(null);
+
+        Assert.False(result.Success);
+    }
 }
