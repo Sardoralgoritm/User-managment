@@ -23,6 +23,10 @@ services:
       - db
     environment:
       ConnectionStrings__DefaultConnectionString: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      EMAIL_CONFIGURATION__EMAIL: ${EMAIL_USER}
+      EMAIL_CONFIGURATION__PASSWORD: ${EMAIL_PASS}
+      EMAIL_CONFIGURATION__HOST: ${EMAIL_CONFIGURATION__HOST}
+      EMAIL_CONFIGURATION__PORT: ${EMAIL_CONFIGURATION__PORT}
     ports:
       - "8080:8080"
 
