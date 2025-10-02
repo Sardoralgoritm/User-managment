@@ -12,6 +12,7 @@ public interface IUserService
     Task<ServiceResult> LogOutUserAsync();
     Task<ServiceResult> BlockUsersAsync(List<Guid> ids);
     Task<ServiceResult> DeleteUsersAsync(List<Guid> ids);
+    Task<ServiceResult> DeleteUnverifiedUsers(List<Guid> ids);
     Task<ServiceResult> UnblockUsersAsync(List<Guid> ids);
     Task<List<User>> GetAllUsersAsync();
 }

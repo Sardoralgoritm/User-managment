@@ -50,9 +50,34 @@ public class UserService : IUserService
         return new ServiceResult { Message = "Users blocked successfully!", Success = true };
     }
 
-    public Task<ServiceResult> DeleteUsersAsync(List<Guid> ids)
+    public async Task<ServiceResult> DeleteUnverifiedUsers(List<Guid> ids)
     {
-        throw new NotImplementedException();
+        if (ids == null)
+        {
+            return new ServiceResult { Message = "Any user selected", Success = false };
+        }
+
+        var users = await dbContext.Users.Where(u => ids.Contains(u.Id) && u.Status == Status.Unverified).ToListAsync();
+
+        dbContext.Users.RemoveRange(users);
+        await dbContext.SaveChangesAsync();
+
+        return new ServiceResult { Message = "Unverified users deleted!", Success = true };
+    }
+
+    public async Task<ServiceResult> DeleteUsersAsync(List<Guid> ids)
+    {
+        if (ids == null)
+        {
+            return new ServiceResult { Message = "Any user selected!", Success = false };
+        }
+
+        var users = await dbContext.Users.Where(u => ids.Contains(u.Id)).ToListAsync();
+
+        dbContext.Users.RemoveRange(users);
+
+        await dbContext.SaveChangesAsync();
+        return new ServiceResult { Message = "Users deleted successfully!", Success = false };
     }
 
     public async Task<List<User>> GetAllUsersAsync()
@@ -98,7 +123,7 @@ public class UserService : IUserService
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = user.RememberMe,
-                ExpiresUtc = user.RememberMe ? DateTimeOffset.UtcNow.AddDays(15) : DateTimeOffset.UtcNow.AddSeconds(10)
+                ExpiresUtc = user.RememberMe ? DateTimeOffset.UtcNow.AddDays(15) : DateTimeOffset.UtcNow.AddHours(1)
             };
 
             if (_httpContext.HttpContext == null)
@@ -191,8 +216,22 @@ public class UserService : IUserService
         }
     }
 
-    public Task<ServiceResult> UnblockUsersAsync(List<Guid> ids)
+    public async Task<ServiceResult> UnblockUsersAsync(List<Guid> ids)
     {
-        throw new NotImplementedException();
+        if (ids == null)
+        {
+            return new ServiceResult { Message = "Users are not selected!", Success = false };
+        }
+
+        var users = await dbContext.Users.Where(u => ids.Contains(u.Id) && u.Status == Status.Blocked).ToListAsync();
+        foreach (var user in users)
+        {
+            user.Status = Status.Active;
+            dbContext.Users.Update(user);
+        }
+
+        await dbContext.SaveChangesAsync();
+
+        return new ServiceResult { Message = "Users unblocked successfully!", Success = true };
     }
 }

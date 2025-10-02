@@ -47,8 +47,12 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 d-flex align-items-center">
             <h1 class="h3 mb-4 mt-3">User Management</h1>
+
+            <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0 ms-auto">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+            </form>
         </div>
     </div>
 
@@ -80,7 +84,7 @@
             <div class="card">
                 <!-- Toolbar -->
                 <div class="card-header toolbar p-3">
-                    <form asp-action="BulkAction" method="post" id="bulkActionForm">
+                    <form asp-action="BulkAction" asp-controller="Account" method="post" id="bulkActionForm">
                         <input type="hidden" name="selectedIds" id="selectedIdsInput" />
                         <input type="hidden" name="action" id="actionInput" />
 
@@ -276,6 +280,7 @@
             }
 
             function getSelectedUserIds() {
+                console.log(Array.from(document.querySelectorAll('.user-checkbox:checked')).map(cb => cb.value));
                 return Array.from(document.querySelectorAll('.user-checkbox:checked')).map(cb => cb.value);
             }
 
@@ -309,7 +314,7 @@
             });
 
             deleteUnverifiedBtn.addEventListener('click', function() {
-                showConfirmation('Delete Unverified', 'Delete ALL unverified users? This cannot be undone.', 'delete-unverified');
+                showConfirmation('Delete Unverified', 'Delete ALL unverified users? This cannot be undone.', 'deleteUnverified');
             });
 
             updateToolbarState();

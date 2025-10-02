@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using UserManagmentSystem.Web.Data;
 using UserManagmentSystem.Web.Models;
 using UserManagmentSystem.Web.Models.Entities;
@@ -151,4 +152,51 @@ public class AccountController : Controller
 
         return View("VerificationFailed");
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Logout()
+    {
+        var res = await _userService.LogOutUserAsync();
+        if (res.Success)
+        {
+            return RedirectToAction("Login");
+        }
+
+        TempData["ErrorMessage"] = res.Message;
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> BulkAction(string selectedIds, string action)
+    {
+        if (string.IsNullOrEmpty(action))
+        {
+            TempData["Error"] = "No action specified.";
+            return RedirectToAction("Index");
+        }
+
+        var ids = string.IsNullOrEmpty(selectedIds)
+            ? new List<Guid>()
+            : selectedIds.Split(',').Select(Guid.Parse).ToList();
+
+        switch (action)
+        {
+            case "block":
+                await _userService.BlockUsersAsync(ids);
+                break;
+            case "unblock":
+                await _userService.UnblockUsersAsync(ids);
+                break;
+            case "delete":
+                await _userService.DeleteUsersAsync(ids);
+                break;
+            case "deleteUnverified":
+                await _userService.DeleteUnverifiedUsers(ids);
+                break;
+        }
+
+        TempData["Success"] = "Action completed: " + action;
+        return RedirectToAction("", "");
+    }
+
 }
